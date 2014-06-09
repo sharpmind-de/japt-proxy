@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       ">
+
+    <context:annotation-config/>
+
+    <bean id="configuration" class="net.siegmar.japtproxy.misc.Configuration">
+        <constructor-arg value="${japtproxy.config}"/>
+    </bean>
+
+    <bean id="japtProxy" class="net.siegmar.japtproxy.JaptProxy">
+        <property name="configuration" ref="configuration"/>
+        <property name="repoPackageFinders">
+            <map>
+                <entry key="DEB" value-ref="debianPackageFinder"/>
+                <entry key="RPM" value-ref="rpmPackageFinder"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="httpClientConfigurer" class="net.siegmar.japtproxy.fetcher.HttpClientConfigurer">
+        <property name="configuration" ref="configuration"/>
+        <property name="socketTimeout" value="${japtproxy.fetcher.timeout}" />
+        <property name="connectTimeout" value="${japtproxy.fetcher.timeout}" />
+    </bean>
+    <bean id="httpClient" factory-bean="httpClientConfigurer" factory-method="build" destroy-method="close"/>
+
+    <bean id="fetcherPool" class="net.siegmar.japtproxy.fetcher.FetcherPool">
+        <property name="fetchers">
+            <map>
+                <entry key="http">
+                    <bean class="net.siegmar.japtproxy.fetcher.FetcherHttp">
+                        <property name="httpClient" ref="httpClient"/>
+                    </bean>
+                </entry>
+                <entry key="ftp">
+                    <bean class="net.siegmar.japtproxy.fetcher.FetcherFtp">
+                        <property name="dataTimeout" value="${japtproxy.fetcher.timeout}"/>
+                        <property name="socketTimeout" value="${japtproxy.fetcher.timeout}"/>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+</beans>

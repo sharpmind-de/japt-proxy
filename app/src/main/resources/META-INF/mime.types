@@ -1,0 +1,4 @@
+application/x-debian-package deb udeb
+application/x-gzip gz gzip
+application/x-bzip2 bz2
+application/x-rpm rpm srpm

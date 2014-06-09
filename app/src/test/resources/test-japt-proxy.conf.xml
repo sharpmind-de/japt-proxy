@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<japt-proxy>
+
+    <!-- The cache directory is the place where downloaded files are kept. (mandatory) -->
+    <!-- cache-dir>/var/cache/japt-proxy</cache-dir -->
+    <cache-dir>/tmp/japt-proxy</cache-dir>
+
+    <!--
+        The max-versions parameter is used to limit the number of old versions in the cache directory.
+        If the number of version reached this parameter, the oldest version gets deleted if a newer
+        version gets downloaded. (optional)
+    -->
+    <max-versions>2</max-versions>
+
+    <!-- The http-proxy parameter may be used if you haven't a direct internet connection. (optional) -->
+    <!--
+    <http-proxy>your.http.proxy:3128</http-proxy>
+    -->
+
+    <!--
+        Backend configuration. This is a list of backends you want to offer to the clients. Each backend
+        can have a list (at least one is required) of urls which provides the packages offered by this
+        backend.
+
+        As japt-proxy is not limited to debian any more, the new type attribute is mandatory.
+        At present it should be 'debian' or 'rpm'.
+
+        A full list of available debian mirrors is provided at http://www.debian.org/mirror/list
+        Use a mirror next to you. The configuration below is just an example.
+
+        Example:
+
+        In your sources.list there are these entries:
+
+        deb http://ftp.us.debian.org/debian/ stable main contrib
+        deb http://security.debian.org stable/updates main contrib
+
+        with Japt-Proxy these lines could be changed to:
+
+        deb http://localhost:8080/japt-proxy/debian/ stable main contrib
+        deb http://localhost:8080/japt-proxy/debian-security/ stable/updates main contrib
+
+        Japt-Proxy will handle the trailing '/debian/' and '/debian-security/' as the backend name
+        and will use the first url in the backend 'debian' resp. 'debian-security' for fetching files.
+        If a url in the list fails, Japt-proxy will try the next one automatically.
+
+        Note, that the backend name is also used for building the cache-path. If the cache-dir is
+        set to /var/cache/japt-proxy and the backend is called 'debian-security' the cache-dir
+        for that backend is /var/cache/japt-proxy/debian-security. If you want to change that
+        you can use a dir attribute for the backend tag - Example:
+
+        <backend name="debian-security" dir="/foo" type="debian">...</backend>
+
+        will use /var/cache/japt-proxy/foo as cache-dir
+
+        (mandatory)
+    -->
+    <backends>
+        <backend name="debian" type="DEB">
+            <url>http://ftp.us.debian.org/debian</url>
+            <url>http://ftp.de.debian.org/debian</url>
+            <url>http://ftp2.de.debian.org/debian</url>
+        </backend>
+        <backend name="debian-security" type="DEB">
+            <url>http://security.debian.org</url>
+        </backend>
+        <backend name="suse-oss-10.3" type="RPM">
+            <url>http://ftp5.gwdg.de/pub/opensuse/distribution/10.3/repo/oss</url>
+        </backend>
+    </backends>
+
+</japt-proxy>

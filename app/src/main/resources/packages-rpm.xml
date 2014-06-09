@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       ">
+
+    <bean id="rpmRepoPackageFactory" class="net.siegmar.japtproxy.packages.RepoPackageBuilder">
+        <property name="pattern" value="^([^-]+)-([^-]+?)(?:-(.+?))?\.([^.]+)(?:\.((?:delta\.)?s?rpm))?$"/>
+    </bean>
+
+    <bean id="rpmPackageFinder" class="net.siegmar.japtproxy.packages.RepoPackageFinder">
+        <property name="configuration" ref="configuration"/>
+        <property name="packagePool">
+            <bean class="net.siegmar.japtproxy.packagepool.DiskPackagePool">
+                <property name="configuration" ref="configuration"/>
+                <property name="comparator">
+                    <bean class="net.siegmar.japtproxy.packages.rpm.RpmPackageVersionComparator"/>
+                </property>
+                <property name="repoPackageBuilder" ref="rpmRepoPackageFactory"/>
+                <property name="startDelay" value="${japtproxy.packageCleanup.startDelay}"/>
+                <property name="repeatInterval" value="${japtproxy.packageCleanup.repeatInterval}"/>
+            </bean>
+        </property>
+        <property name="ioHandler">
+            <bean class="net.siegmar.japtproxy.misc.IOHandler">
+                <property name="fetcherPool" ref="fetcherPool"/>
+            </bean>
+        </property>
+    </bean>
+
+</beans>
