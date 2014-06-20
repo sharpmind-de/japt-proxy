@@ -266,7 +266,7 @@ public class IOHandler {
 
             poolObject.setLastModified(remoteModification);
 
-            if (contentLength != 0 && bytesCopied != contentLength) {
+            if (contentLength != -1 && bytesCopied != contentLength) {
                 throw new IOException(String.format("Received file has invalid file size - " +
                     "only %d of %d were downloaded", bytesCopied, contentLength));
             }
@@ -309,7 +309,7 @@ public class IOHandler {
             res.setContentType(contentType);
         }
 
-        if (contentLength != 0) {
+        if (contentLength != -1) {
             res.setContentLength((int) contentLength);
         }
 

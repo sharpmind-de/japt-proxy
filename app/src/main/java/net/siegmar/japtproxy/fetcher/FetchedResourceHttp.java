@@ -20,6 +20,7 @@ package net.siegmar.japtproxy.fetcher;
 
 import net.siegmar.japtproxy.misc.HttpHeaderConstants;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.DateUtils;
 
@@ -101,7 +102,8 @@ public class FetchedResourceHttp implements FetchedResource {
      */
     @Override
     public long getContentLength() {
-        return httpGet.getEntity().getContentLength();
+        final HttpEntity entity = httpGet.getEntity();
+        return entity != null ? entity.getContentLength() : -1;
     }
 
     /**

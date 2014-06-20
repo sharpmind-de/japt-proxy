@@ -45,7 +45,7 @@ public interface FetchedResource {
     long getLastModified();
 
     /**
-     * @return Returns the length of the content.
+     * @return Returns the length of the content (-1 if unknown).
      */
     long getContentLength();
 
