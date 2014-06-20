@@ -70,7 +70,7 @@ Create directories and copy configuration
 
 Build and install Japt-Proxy
 
-    ./gradlew assemble
+    ./gradlew fatJar
     cp standalone/build/libs/japt-proxy-server-*.jar /opt/japt-proxy/japt-proxy.jar
 
 Launching

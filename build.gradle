@@ -1,5 +1,15 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'eu.appsatori:gradle-fatjar-plugin:0.2'
+    }
+}
+
 allprojects {
     apply plugin: 'java'
     apply plugin: 'checkstyle'
@@ -63,6 +73,8 @@ project(':app') {
 }
 
 project(':standalone') {
+    apply plugin: 'fatjar'
+
     archivesBaseName = 'japt-proxy-server'
 
     dependencies {
@@ -70,8 +82,12 @@ project(':standalone') {
         compile('org.mortbay.jetty:jetty:6.1.26')
     }
 
-    jar {
-        from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    fatJarPrepareFiles {
+        include 'META-INF/spring.handlers'
+        include 'META-INF/spring.schemas'
+    }
+
+    fatJar {
         manifest.attributes('Main-Class': 'net.siegmar.japtproxy.JaptProxyServer')
     }
 }
