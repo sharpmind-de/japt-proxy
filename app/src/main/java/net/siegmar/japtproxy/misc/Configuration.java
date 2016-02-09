@@ -1,18 +1,18 @@
 /**
  * Japt-Proxy: The JAVA(TM) based APT-Proxy
- *
+ * <p/>
  * Copyright (C) 2006-2008  Oliver Siegmar <oliver@siegmar.net>
- *
+ * <p/>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,7 +20,6 @@ package net.siegmar.japtproxy.misc;
 
 import net.siegmar.japtproxy.exception.InitializationException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jdom2.Document;
@@ -34,8 +33,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -89,7 +86,11 @@ public class Configuration {
 
             maxVersions = NumberUtils.createInteger(maxVersionsString);
 
+/*
             final List<Element> backends = rootElement.getChild("backends").getChildren();
+
+            // disable backend config
+
 
             for (final Element e : backends) {
                 final List<Element> confUrls = e.getChildren();
@@ -120,6 +121,7 @@ public class Configuration {
 
                 backendSystems.put(name, backend);
             }
+*/
         } catch (final IOException | JDOMException e) {
             throw new InitializationException("Error reading configuration", e);
         }
@@ -145,18 +147,46 @@ public class Configuration {
         return maxVersions;
     }
 
+/*
     public Backend getBackend(final String backendName) {
         return backendSystems.get(backendName);
+    }
+*/
+
+    public Backend getBackend(final RequestedData requestedData) {
+        // check if we have a backend
+        Backend backend = backendSystems.get(requestedData.getServerName());
+
+        if (backend != null) return backend;
+
+        // create a new backend on the fly (only DEB for now)
+        try {
+            backend = new Backend(BackendType.DEB);
+            final File backendDirectory = new File(cacheDir, requestedData.getServerName());
+
+            FileUtils.forceMkdir(backendDirectory);
+            backend.setDirectory(backendDirectory);
+            backend.addUrl(new URL(requestedData.getHostUrl() + "/" + requestedData.getRequestedBackend()));
+
+            backendSystems.put(requestedData.getServerName(), backend);
+
+        } catch (final IOException e) {
+            //log("Error reading configuration", e);
+            return null;
+        }
+
+
+        return backend;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-            .append("cacheDir", cacheDir)
-            .append("httpProxy", httpProxy)
-            .append("maxVersions", maxVersions)
-            .append("backendSystems", backendSystems)
-            .toString();
+                .append("cacheDir", cacheDir)
+                .append("httpProxy", httpProxy)
+                .append("maxVersions", maxVersions)
+                .append("backendSystems", backendSystems)
+                .toString();
     }
 
 }

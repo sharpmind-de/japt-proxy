@@ -1,18 +1,18 @@
 /**
  * Japt-Proxy: The JAVA(TM) based APT-Proxy
- *
+ * <p/>
  * Copyright (C) 2006-2008  Oliver Siegmar <oliver@siegmar.net>
- *
+ * <p/>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -48,6 +48,13 @@ public class RequestedData {
     private String requestedBackend;
 
     private String userAgent;
+
+    private String url;
+    private String hostUrl;
+    private String scheme;
+    private String serverName;
+    private int serverPort;
+
 
     /**
      * Returns the requested resource.
@@ -129,15 +136,61 @@ public class RequestedData {
         this.userAgent = userAgent;
     }
 
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public int getServerPort() {
+        return serverPort;
+    }
+
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getHostUrl() {
+        return hostUrl;
+    }
+
+    public void setHostUrl(String hostUrl) {
+        this.hostUrl = hostUrl;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-            .append("target", requestedTarget)
-            .append("resource", requestedResource)
-            .append("backend", requestedBackend)
-            .append("modSince", requestModifiedSince)
-            .append("userAgent", userAgent)
-            .toString();
+                .append("target", requestedTarget)
+                .append("resource", requestedResource)
+                .append("backend", requestedBackend)
+                .append("modSince", requestModifiedSince)
+                .append("userAgent", userAgent)
+                .append("url", url)
+                .append("hostUrl", hostUrl)
+                .append("scheme", scheme)
+                .append("serverName", serverName)
+                .append("serverPort", serverPort)
+                .toString();
     }
 
 }

@@ -76,7 +76,7 @@ public class RepoPackageFinder {
         final String requestedTarget = requestedData.getRequestedTarget();
 
         final String requestedBackend = requestedData.getRequestedBackend();
-        final Backend backend = configuration.getBackend(requestedBackend);
+        final Backend backend = configuration.getBackend(requestedData);
 
         final PoolObject poolObject = packagePool.getPoolObject(backend, requestedTarget);
 
