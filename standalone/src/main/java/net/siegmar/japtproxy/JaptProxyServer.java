@@ -19,8 +19,7 @@
 package net.siegmar.japtproxy;
 
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
 import net.siegmar.japtproxy.misc.Util;
 import org.apache.commons.lang3.StringUtils;
 import org.mortbay.jetty.Connector;
@@ -65,6 +64,10 @@ public final class JaptProxyServer {
      */
     private static void initializeLogging(final String logConfig) {
         final LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        StatusPrinter.print(lc);
+
+/*
         final JoranConfigurator configurator = new JoranConfigurator();
         configurator.setContext(lc);
         lc.stop();
@@ -73,6 +76,7 @@ public final class JaptProxyServer {
         } catch (final JoranException e) {
             throw new IllegalStateException(e);
         }
+*/
     }
 
     /**
