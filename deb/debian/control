@@ -1,0 +1,20 @@
+Section: net
+Priority: optional
+Standards-Version: 3.9.2
+
+Package: japt
+Changelog: debian/changelog
+Maintainer: Marco Stolze <marco@sharpmind.de>
+Depends: cronolog
+Postinst: debian/postinst
+Prerm: debian/prerm
+Files: opt/japt/japt.conf /opt/japt/japt.conf
+ opt/japt/log.conf /opt/japt/log.conf
+ opt/japt/bin/japt /opt/japt/bin/japt
+ etc/default/japt /etc/default/japt
+ etc/init.d/japt /etc/init.d/japt
+ ../standalone/build/libs/japt-proxy-server-2.1.jar /opt/japt/japt.jar
+Description: JAPT Proxy
+ Java APT Proxy
+
+# vim:set ts=4 sw=4 expandtab:

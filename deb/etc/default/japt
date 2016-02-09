@@ -1,0 +1,8 @@
+# Default config file for Java APT Proxy (japt)
+#
+# This file is sourced from /opt/japt/bin/japt
+
+JAPT_CONFIG="/opt/japt/japt.conf"
+JAPT_LOG_CONFIG="/opt/japt/log.conf"
+JAPT_CONTEXT_PATH="/"
+JAPT_PORT=3142

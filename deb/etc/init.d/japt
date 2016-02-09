@@ -1,0 +1,90 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          japt
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Java APT Proxy
+# Description:       Java based APT Proxy
+### END INIT INFO
+
+# Author: Marco Stolze <marco@sharpmind.de>
+
+DESC="JAVA APT Proxy (japt)"
+NAME="japt"
+DAEMON_BIN=/opt/japt/bin/$NAME
+DAEMON_PATTERN="java.*japt*.jar"
+DAEMON_ARGS=
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+# Exit if the package is not installed
+[ -x "$DAEMON_BIN" ] || exit 0
+
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
+# and status_of_proc is working.
+. /lib/lsb/init-functions
+
+#
+# Function that starts the daemon/service
+#
+do_start()
+{
+        $DAEMON_BIN
+}
+
+#
+# Function that stops the daemon/service
+#
+do_stop()
+{
+        pkill -f "$DAEMON_PATTERN"
+}
+
+case "$1" in
+        start)
+                [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+                pgrep -f "$DAEMON_PATTERN" 2>&1 >/dev/null
+                [ $? -eq 0 ] && {
+                        log_daemon_msg "$DESC already running" "$NAME"
+                        exit 0
+                }
+
+                do_start
+                exit $?
+                ;;
+        stop)
+                [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+                do_stop
+                case "$?" in
+                        0|1) exit 0 ;;
+                        2)   exit 1 ;;
+                esac
+                ;;
+        restart)
+                log_daemon_msg "Restarting $DESC" "$NAME"
+                do_stop
+                case "$?" in
+                  0|1) do_start; exit $? ;;
+                  *)   exit 1 ;;
+                esac
+                ;;
+        status)
+                pgrep -f "$DAEMON_PATTERN" 2>&1 >/dev/null
+                case "$?" in
+                        0) echo "$NAME is running"; exit 0 ;;
+                        *) echo "$NAME is NOT running"; exit 1 ;;
+                esac
+                ;;
+        *)
+                echo "Usage: $SCRIPTNAME {start|stop|restart|status}" >&2
+                exit 3
+                ;;
+esac
+
+# vim:set ts=4 sw=4 expandtab:

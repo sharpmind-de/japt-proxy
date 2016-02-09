@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Start the java APT Proxy
+
+NAME=japt
+
+BASE_DIR=/opt/$NAME
+JAR=$BASE_DIR/$NAME.jar
+JAVA=$(which java)
+CRONOLOG=/usr/bin/cronolog
+LOG_FILE=/var/log/$NAME/%Y%m%d-%H-$NAME-server.log
+DEFAULT_FILE=/etc/default/$NAME
+
+cd $BASE_DIR
+
+[ -r "$JAR" ]  || {
+        echo "Error: Jar file $JAR missing."
+        exit 0
+}
+
+[ -x "$JAVA" ] || {
+        echo "Error: java binary not found."
+        exit 0
+}
+
+[ -r "$DEFAULT_FILE" ] && source $DEFAULT_FILE
+
+OPTS=
+OPTS="$OPTS -Djaptproxy.config=$JAPT_CONFIG"
+OPTS="$OPTS -Djaptproxy.logConfig=$JAPT_LOG_CONFIG"
+OPTS="$OPTS -Djaptproxy.contextPath=$JAPT_CONTEXT_PATH"
+OPTS="$OPTS -Djaptproxy.port=$JAPT_PORT"
+
+# start server
+exec $JAVA -server $OPTS -jar $JAR | $CRONOLOG $LOG_FILE &
+
