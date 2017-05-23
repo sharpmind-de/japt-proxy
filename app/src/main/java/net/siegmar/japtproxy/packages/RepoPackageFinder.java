@@ -87,7 +87,7 @@ public class RepoPackageFinder {
         for (final Iterator<URL> it = backend.getUrls().iterator(); it.hasNext();) {
             final URL baseURL = it.next();
 
-            LOG.debug("Using backend '{}'", baseURL);
+            LOG.debug("Using backend '{}' for {}", baseURL, requestedData.getUrl());
 
             final URL targetResource = new URL(baseURL + requestedTarget);
 
