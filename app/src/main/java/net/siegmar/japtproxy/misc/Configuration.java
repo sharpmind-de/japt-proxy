@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -67,6 +68,8 @@ public class Configuration {
      */
     private final Map<String, Backend> backendSystems = new HashMap<>();
 
+    private final Map<String, String> remaps = new HashMap<>();
+
     /**
      * Initialize the configuration with the given config file.
      *
@@ -85,6 +88,35 @@ public class Configuration {
             final String maxVersionsString = rootElement.getChildTextTrim("max-versions");
 
             maxVersions = NumberUtils.createInteger(maxVersionsString);
+
+
+            // support remap definitions
+            // Syntax in config file:
+            /*
+                <remaps>
+                    <remap from="sourcehost" to="targethost"/>
+                </remaps>
+            */
+
+            final List<Element> remapElements = rootElement.getChild("remaps").getChildren();
+
+            for (final Element e : remapElements) {
+                final String from = e.getAttributeValue("from");
+                final String to = e.getAttributeValue("to");
+
+                if (from == null || to == null) {
+                    LOG.debug("from or to missing from remap config element");
+                    throw new InitializationException("Error reading configuration. Remap does not contain from and/or to attribute");
+                }
+
+                if (remaps.containsKey(from)) {
+                    LOG.debug("Mapping for remap {} already present in config file", from);
+                    throw new InitializationException("Error reading configuration. Duplicate remap config for from: " + from);
+                }
+
+                LOG.debug("Added remap: {} -> {}", from, to);
+                remaps.put(from, to);
+            }
 
 /*
             final List<Element> backends = rootElement.getChild("backends").getChildren();
@@ -152,6 +184,10 @@ public class Configuration {
         return backendSystems.get(backendName);
     }
 */
+
+    public String getRemap(String from) {
+        return remaps.get(from);
+    }
 
     public Backend getBackend(final RequestedData requestedData) {
         // check if we have a backend

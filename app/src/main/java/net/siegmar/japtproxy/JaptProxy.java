@@ -54,7 +54,7 @@ public class JaptProxy {
      * @param request the object to populate with extracted information.
      * @throws net.siegmar.japtproxy.exception.InvalidRequestException is thrown if requested url is invalid.
      */
-    private static RequestedData buildRequestedData(final HttpServletRequest request)
+    private static RequestedData buildRequestedData(final HttpServletRequest request, final Configuration configuration)
             throws InvalidRequestException {
         final String resource = request.getPathInfo();
         final RequestedData requestedData = new RequestedData();
@@ -62,8 +62,8 @@ public class JaptProxy {
         requestedData.setRequestModifiedSince(request.getDateHeader(HttpHeaderConstants.IF_MODIFIED_SINCE));
 
         requestedData.setUserAgent(request.getHeader(HttpHeaderConstants.USER_AGENT));
-        requestedData.setUrl(getURL(request));
-        requestedData.setHostUrl(getURL(request, true));
+        requestedData.setUrl(getURL(request, configuration));
+        requestedData.setHostUrl(getURL(request, true, configuration));
         requestedData.setScheme(request.getScheme());
         requestedData.setServerName(request.getServerName());
         requestedData.setServerPort(request.getServerPort());
@@ -104,14 +104,21 @@ public class JaptProxy {
         return requestedData;
     }
 
-    public static String getURL(HttpServletRequest req) {
-        return getURL(req, false);
+    public static String getURL(HttpServletRequest req, Configuration configuration) {
+        return getURL(req, false, configuration);
     }
 
-    public static String getURL(HttpServletRequest req, boolean serverOnly) {
+    public static String getURL(HttpServletRequest req, boolean serverOnly, Configuration configuration) {
 
         String scheme = req.getScheme();             // http
         String serverName = req.getServerName();     // hostname.com
+
+        // do we have a remap for this serverName??
+        String remap = configuration.getRemap(serverName);
+        if (remap != null) {
+            serverName = remap;
+        }
+
         int serverPort = req.getServerPort();        // 80
         String contextPath = req.getContextPath();   // /mywebapp
         String servletPath = req.getServletPath();   // /servlet/MyServlet
@@ -159,7 +166,7 @@ public class JaptProxy {
      */
     public void handleRequest(final HttpServletRequest req, final HttpServletResponse res)
             throws HandlingException, IOException {
-        final RequestedData requestedData = buildRequestedData(req);
+        final RequestedData requestedData = buildRequestedData(req, configuration);
 
         LOG.debug("Gathered information from request: {}", requestedData);
 
