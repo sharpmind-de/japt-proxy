@@ -46,9 +46,14 @@ public final class JaptProxyServer {
     private static final String OPT_LOG_CONFIG = "japtproxy.logConfig";
     private static final String OPT_HOST = "japtproxy.host";
     private static final String OPT_PORT = "japtproxy.port";
-    private static final String[] REQUIRED_OPTIONS = {
-        OPT_CONFIG, OPT_CONTEXT_PATH, OPT_LOG_CONFIG, OPT_PORT
-    };
+
+    private static final String OPT_CONFIG_DEFAULT = "/etc/japt-proxy/japt-proxy.cfg.xml";
+    private static final String OPT_CONTEXT_PATH_DEFAULT = "/";
+    private static final String OPT_LOG_CONFIG_DEFAULT = "/etc/japt-proxy/japt-proxy-log.cfg.xml";
+    private static final String OPT_PORT_DEFAULT = "3142";
+
+    //private static final String[] REQUIRED_OPTIONS = { OPT_CONFIG, OPT_CONTEXT_PATH, OPT_LOG_CONFIG, OPT_PORT };
+    private static final String[] REQUIRED_OPTIONS = {};
 
     /**
      * Private contstructor.
@@ -146,18 +151,29 @@ public final class JaptProxyServer {
             System.exit(1);
         }
 
-        final String configFile = System.getProperty(OPT_CONFIG);
-        final String contextPath = System.getProperty(OPT_CONTEXT_PATH);
-        final String logConfig = System.getProperty(OPT_LOG_CONFIG);
+        String configFile = System.getProperty(OPT_CONFIG);
+        String contextPath = System.getProperty(OPT_CONTEXT_PATH);
+        String logConfig = System.getProperty(OPT_LOG_CONFIG);
         final String host = System.getProperty(OPT_HOST);
-        final String port = System.getProperty(OPT_PORT);
+        String port = System.getProperty(OPT_PORT);
 
         // Check settings
-        if (configFile != null) {
-            if (!new File(configFile).exists()) {
-                System.err.println("Config file '" + configFile + "' doesn't exist");
-                System.exit(1);
-            }
+        if (configFile == null) {
+            configFile = OPT_CONFIG_DEFAULT;
+        }
+        if (contextPath == null) {
+            contextPath = OPT_CONTEXT_PATH_DEFAULT;
+        }
+        if (logConfig == null) {
+            logConfig = OPT_LOG_CONFIG_DEFAULT;
+        }
+        if (port == null) {
+            port = OPT_PORT_DEFAULT;
+        }
+
+        if (!new File(configFile).exists()) {
+            System.err.println("Config file '" + configFile + "' doesn't exist");
+            System.exit(1);
         }
 
         try {
